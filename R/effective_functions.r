@@ -147,6 +147,10 @@ qqPoints <- function (x,
 #' p-values from normality tests.
 #' @param ... Other arguments, currently unimplemented.
 #'
+#' @description Note, that we do note use the Doornik-Hansen test because
+#' the implementation in `normwh.test` has been archived.  We continue to use
+#' the other methods prescribed in Velez et al. 
+#'
 #' @return A scalar giving the optimal transformation parameter.
 #'
 #' @references
@@ -160,7 +164,6 @@ qqPoints <- function (x,
 #' @importFrom car bcPower yjPower
 #' @importFrom nortest lillie.test sf.test ad.test
 #' @importFrom lawstat rjb.test
-#' @importFrom normwhn.test normality.test1
 #' 
 #' @examples
 #' data(wvs)
@@ -193,10 +196,7 @@ transNorm <- function(x, start = .01, family=c("bc", "yj"), lams,
   p3 <- sapply(1:ncol(trans_vals), function(i)ad.test(trans_vals[,i])$p.value)
   p4 <- sapply(1:ncol(trans_vals), function(i)shapiro.test(trans_vals[,i])$p.value)
   p5 <- sapply(1:ncol(trans_vals), function(i)rjb.test(trans_vals[,i])$p.value)
-  sink(tempfile())
-  p6 <- sapply(1:ncol(trans_vals), function(i)c(normality.test1(trans_vals[,i, drop=FALSE])[1,1]))
-  sink()
-  allp <- cbind(p1, p2, p3, p4, p5, p6)
+  allp <- cbind(p1, p2, p3, p4, p5)
   pcfun <- switch(cm, Stouffer = metap::sumz, Fisher = metap::sumlog, Average = metap::meanp)
   if(any(allp < 0.0000001)){
     allp[which(allp < 0.0000001, arr.ind= TRUE)] <- 0.0000001
@@ -804,6 +804,7 @@ srr_imp <- function(obj,
       k <- k+1
     }
   }
+  if(boot){
   B <- mvrnorm(R, coef(obj), vcov(obj))
   X <- model.matrix(obj)
   p_sim <- sapply(inds, function(i){
@@ -822,6 +823,17 @@ srr_imp <- function(obj,
                     importance = unname(p0), 
                     lwr = cis[1,], 
                     upr = cis[2,])
+  }else{
+    X <- model.matrix(obj)
+    p0 <- sapply(inds, function(i){
+      sd(c(X[, i, drop=FALSE] %*% c(coef(obj)[i])))
+    })
+    if(pct){
+      p0 <- p0/sum(p0)
+    }
+    res <- data.frame(var = factor(1:length(inds), labels=names(inds)), 
+                      importance = unname(p0))
+  }
   rownames(res) <- NULL
   return(res)
 }
