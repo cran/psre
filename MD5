@@ -1,7 +1,7 @@
-95dc06c304577e920e452c98f93c6932 *DESCRIPTION
-43f6c0b0cbe87a4efcd55c9fa57c760f *NAMESPACE
+04f2fee681332e53675942567156511a *DESCRIPTION
+5ae7da240ccc5ad2ce8c6894e1f854e1 *NAMESPACE
 44b10d842eb22c358dec3666583481ba *R/data_documentation.r
-bbd4328cc1d1ad7155ed33bcceaaa273 *R/effective_functions.r
+51fa30375bca8edb7dc4c2ccb9d73432 *R/effective_functions.r
 76e123f5dcc8dee07678412adc0a2a84 *build/partial.rdb
 cc076e734df861403ab269d007b16233 *data/ces.rda
 ecbcac5f00806cc78316b18ce83b0d83 *data/gss.rda
